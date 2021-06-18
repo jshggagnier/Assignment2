@@ -1,3 +1,4 @@
+package com.example;
 
 public class Square{
     private String boxname;
@@ -6,7 +7,7 @@ public class Square{
     private String boxcolor;
     private boolean outlined;
 
-    public String getname() {
+    public String getboxname() {
         return this.boxname;
     }
 
@@ -14,22 +15,22 @@ public class Square{
         return this.height;
     }
 
-    public int getWidth()
+    public int getwidth()
     {
         return this.width;
     }
 
-    public String getColor()
+    public String getboxcolor()
     {
         return this.boxcolor;
     }
     
-    public boolean outlined()
+    public boolean getoutlined()
     {
         return this.outlined;
     }
     
-    public void setname(String target) {
+    public void setboxname(String target) {
         this.boxname = target;
     }
 
@@ -37,17 +38,17 @@ public class Square{
         this.height = target;
     }
 
-    public void setWidth(int target)
+    public void setwidth(int target)
     {
         this.width = target;
     }
 
-    public void setColor(String target)
+    public void setboxcolor(String target)
     {
         this.boxcolor = target;
     }
     
-    public void outlined(boolean target)
+    public void setoutlined(boolean target)
     {
         this.outlined = target;
     }

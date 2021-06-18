@@ -26,6 +26,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import jdk.jfr.Registered;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 
@@ -82,11 +84,7 @@ public class Main {
     return "person";
   }
 
-  @PostMapping(
-    path = "/person",
-    consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
-  )
-
+  @PostMapping(path = "/person",consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
   public String handleBrowserPersonSubmit(Map<String, Object> model, Person person) throws Exception {
     // Save the person data into the database
     try (Connection connection = dataSource.getConnection()) {
@@ -100,33 +98,39 @@ public class Main {
       model.put("message", e.getMessage());
       return "error";
     }
+  }
+
+
+  @GetMapping(path = "/AddSquare")
+  public String getAddSquareForm(Map<String, Object> model){
+    Square square = new Square();  // creates new person object with empty fname and lname
+    model.put("square", square);
+    return "AddSquare";
+  }
+
+  @PostMapping(
+    path = "/AddSquare",
+    consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+  )
+  public String handleBrowserSquareSubmit(Map<String, Object> model, Square square) throws Exception {
+    // Save the person data into the database
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS squares (id serial, boxname varchar(20), height int, width int, color char(7), outlined boolean)");
+      String sql = "INSERT INTO squares (boxname,height,width,color,outlined) VALUES ('"+ square.getboxname() +"','"+square.getheight()+"','"+ square.getwidth() +"','"+square.getboxcolor()+"',"+square.getoutlined()+")";
+      stmt.executeUpdate(sql);
+      //System.out.println(person.getFname() + " " + person.getLname());
+      return "redirect:/";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "error";
+    }
 
   }
 
   @GetMapping("/person/success")
   public String getPersonSuccess(){
     return "success";
-  }
-
-  @RequestMapping("/db")
-  String db(Map<String, Object> model) {
-    try (Connection connection = dataSource.getConnection()) {
-      Statement stmt = connection.createStatement();
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp)");
-      stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
-      ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
-
-      ArrayList<String> output = new ArrayList<String>();
-      while (rs.next()) {
-        output.add("Read from DB: " + rs.getTimestamp("tick"));
-      }
-
-      model.put("records", output);
-      return "db";
-    } catch (Exception e) {
-      model.put("message", e.getMessage());
-      return "error";
-    }
   }
 
   @Bean
