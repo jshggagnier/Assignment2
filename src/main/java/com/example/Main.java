@@ -53,9 +53,24 @@ public class Main {
 
   @RequestMapping("/")
   String index(Map<String, Object> model) {
-    String name = "Bobby";
-    model.put("name", name);
-    return "index";
+  try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS squares (id serial, boxname varchar(20), height int, width int, color varchar(20), outlined boolean)");
+      //String sql = "INSERT INTO squares (boxname,height,width,color,outlined) VALUES ('bob',10,10,'black',true)";
+      //stmt.executeUpdate(sql);
+      ResultSet rs = stmt.executeQuery("SELECT * FROM squares");
+      ArrayList<String> output = new ArrayList<String>();
+      while (rs.next()) {
+        output.add("Read from DB: " + rs.getString("boxname") + rs.getInt("height") + rs.getInt("Width") + rs.getString("color") + rs.getBoolean("outlined"));
+      }
+
+      model.put("boxes", output);
+      return "index";
+    } 
+  catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "error";
+    }
   }
 
   @GetMapping(
@@ -71,6 +86,7 @@ public class Main {
     path = "/person",
     consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
   )
+
   public String handleBrowserPersonSubmit(Map<String, Object> model, Person person) throws Exception {
     // Save the person data into the database
     try (Connection connection = dataSource.getConnection()) {

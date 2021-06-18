@@ -7,7 +7,17 @@
   <title>Document</title>
 </head>
 <body>
-  Hello 
-  <p th:text="${name}"></p>
+  Viewing Contents of the Square Database
+  <div class="container">
+    <button></button>  
+    <table>
+        <th>Database Output</th>
+        <tr th:each="boxname : ${boxes}">
+          <td th:text="${boxname}"></td>
+       </tr>
+    </table>
+
+    <button></button>
+  </div>
 </body>
 </html>
