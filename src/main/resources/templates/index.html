@@ -4,18 +4,21 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <link rel="stylesheet" href="stylesheets/style.css">
+  <title>Square Database</title>
 </head>
 <body>
   Viewing Contents of the Square Database
   <div class="container">
     <table>
         <th>Database Output</th>
-        <tr th:each="boxname : ${boxes}">
+        <tr th:each="boxname,iteration : ${boxes}">
           <td th:text="${boxname}"></td>
-       </tr>
+          <td><a th:href="@{/openbox(id=${iteration.index})}">Edit/Delete</a></td>
+        </tr>
     </table>
     <button onclick="window.location.href='/AddSquare'">Submit a new Square to be recorded</button>
+    
   </div>
 </body>
 </html>

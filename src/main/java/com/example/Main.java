@@ -57,13 +57,13 @@ public class Main {
   String index(Map<String, Object> model) {
   try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS squares (id serial, boxname varchar(20), height int, width int, color varchar(20), outlined boolean)");
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS squares (id serial, boxname varchar(20), height int, width int, boxcolor char(7), outlined boolean)");
       //String sql = "INSERT INTO squares (boxname,height,width,color,outlined) VALUES ('bob',10,10,'black',true)";
       //stmt.executeUpdate(sql);
       ResultSet rs = stmt.executeQuery("SELECT * FROM squares");
       ArrayList<String> output = new ArrayList<String>();
       while (rs.next()) {
-        output.add("Read from DB: " + rs.getString("boxname") + rs.getInt("height") + rs.getInt("Width") + rs.getString("color") + rs.getBoolean("outlined"));
+        output.add(rs.getString("boxname"));
       }
 
       model.put("boxes", output);
@@ -103,7 +103,7 @@ public class Main {
 
   @GetMapping(path = "/AddSquare")
   public String getAddSquareForm(Map<String, Object> model){
-    Square square = new Square();  // creates new person object with empty fname and lname
+    Square square = new Square();  // creates new square
     model.put("square", square);
     return "AddSquare";
   }
@@ -116,8 +116,8 @@ public class Main {
     // Save the person data into the database
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS squares (id serial, boxname varchar(20), height int, width int, color char(7), outlined boolean)");
-      String sql = "INSERT INTO squares (boxname,height,width,color,outlined) VALUES ('"+ square.getboxname() +"','"+square.getheight()+"','"+ square.getwidth() +"','"+square.getboxcolor()+"',"+square.getoutlined()+")";
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS squares (id serial, boxname varchar(20), height int, width int, boxcolor char(7), outlined boolean)");
+      String sql = "INSERT INTO squares (boxname,height,width,boxcolor,outlined) VALUES ('"+ square.getboxname() +"','"+square.getheight()+"','"+ square.getwidth() +"','"+square.getboxcolor()+"',"+square.getoutlined()+")";
       stmt.executeUpdate(sql);
       //System.out.println(person.getFname() + " " + person.getLname());
       return "redirect:/";
@@ -132,6 +132,35 @@ public class Main {
   public String getPersonSuccess(){
     return "success";
   }
+@GetMapping("/openbox")
+public String getID(Map<String, Object> model,@RequestParam String id) {
+  try (Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+    ResultSet rs = stmt.executeQuery("SELECT * FROM squares WHERE id="+(Integer.parseInt(id)+1));
+    rs.next();
+    String boxname = new String();
+    int height;
+    int width;
+    String boxcolor = new String();
+    boolean outlined;
+
+    boxname = rs.getString("boxname");
+    height = rs.getInt("height");
+    width = rs.getInt("width");
+    boxcolor = rs.getString("boxcolor");
+    outlined = rs.getBoolean("outlined");
+
+    model.put("boxname", boxname);
+    model.put("height", height);
+    model.put("width", width);
+    model.put("boxcolor", boxcolor);
+    model.put("outlined", outlined);
+    return "openbox";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  }
+}
 
   @Bean
   public DataSource dataSource() throws SQLException {

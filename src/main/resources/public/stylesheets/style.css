@@ -1,25 +1,3 @@
-body {
-    background-color: rgb(200,234,254); /* #6623B2 */
-    border: 2px dotted blueviolet;
-}
-
-.special {
-    color:red;
-}
-.myclass {
-    
-}
-#it2 {
-    font-size: 2em;
-}
-
-img {
-    /* position:relative;
-    top:100px;
-    left:100px; */
-    width: 25vw;
-}
-
 table, tr, th, td {
     border: 1px solid black
 }
@@ -27,4 +5,3 @@ table, tr, th, td {
 table {
     border-collapse: collapse;
 }
-
