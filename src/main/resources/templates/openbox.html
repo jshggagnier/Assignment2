@@ -32,9 +32,9 @@
             <td th:text="${outlined}"></td>
         </tr>
     </table>
-    <div>Box Shown Below</div>
-    <div th:style="|width:${width}px; height:${height}px; background-color:${boxcolor}; ${outlined ? 'border:2px solid black':'border:0px'}|"></div>
     <button onclick="window.location.href='/'">Return to the Database</button>
     <a th:href="@{/deletebox(id=${id})}">Delete Square</a>
+    <div>Box Shown Below</div>
+    <div th:style="|width:${width}px; height:${height}px; background-color:${boxcolor}; ${outlined ? 'border:2px solid black':'border:0px'}|"></div>
 </body>
 </html>
