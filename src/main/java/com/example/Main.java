@@ -62,11 +62,14 @@ public class Main {
       //stmt.executeUpdate(sql);
       ResultSet rs = stmt.executeQuery("SELECT * FROM squares");
       ArrayList<String> output = new ArrayList<String>();
+      ArrayList<Integer> idlist = new ArrayList<Integer>();
       while (rs.next()) {
         output.add(rs.getString("boxname"));
+        idlist.add(rs.getInt("id"));
       }
 
       model.put("boxes", output);
+      model.put("idlist", idlist);
       return "index";
     } 
   catch (Exception e) {
@@ -74,32 +77,6 @@ public class Main {
       return "error";
     }
   }
-
-  @GetMapping(
-    path = "/person"
-  )
-  public String getPersonForm(Map<String, Object> model){
-    Person person = new Person();  // creates new person object with empty fname and lname
-    model.put("person", person);
-    return "person";
-  }
-
-  @PostMapping(path = "/person",consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-  public String handleBrowserPersonSubmit(Map<String, Object> model, Person person) throws Exception {
-    // Save the person data into the database
-    try (Connection connection = dataSource.getConnection()) {
-      Statement stmt = connection.createStatement();
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS people (id serial, fname varchar(20), lname varchar(20))");
-      String sql = "INSERT INTO people (fname,lname) VALUES ('" + person.getFname() + "','" + person.getLname() + "')";
-      stmt.executeUpdate(sql);
-      System.out.println(person.getFname() + " " + person.getLname());
-      return "redirect:/person/success";
-    } catch (Exception e) {
-      model.put("message", e.getMessage());
-      return "error";
-    }
-  }
-
 
   @GetMapping(path = "/AddSquare")
   public String getAddSquareForm(Map<String, Object> model){
@@ -128,39 +105,60 @@ public class Main {
 
   }
 
-  @GetMapping("/person/success")
-  public String getPersonSuccess(){
-    return "success";
-  }
 @GetMapping("/openbox")
 public String getID(Map<String, Object> model,@RequestParam String id) {
   try (Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
-    ResultSet rs = stmt.executeQuery("SELECT * FROM squares WHERE id="+(Integer.parseInt(id)+1));
+    ResultSet rs = stmt.executeQuery("SELECT * FROM squares WHERE id="+(Integer.parseInt(id)));
     rs.next();
+    int identifier;
     String boxname = new String();
     int height;
     int width;
     String boxcolor = new String();
     boolean outlined;
 
+    identifier = rs.getInt("id");
     boxname = rs.getString("boxname");
     height = rs.getInt("height");
     width = rs.getInt("width");
     boxcolor = rs.getString("boxcolor");
     outlined = rs.getBoolean("outlined");
 
+    model.put("id", identifier);
     model.put("boxname", boxname);
     model.put("height", height);
     model.put("width", width);
     model.put("boxcolor", boxcolor);
     model.put("outlined", outlined);
+
     return "openbox";
   } catch (Exception e) {
     model.put("message", e.getMessage());
     return "error";
   }
 }
+
+@GetMapping(
+  path = "/deletebox"
+)
+public String handleBrowserSquareDelete(Map<String, Object> model,@RequestParam String id)
+ throws Exception {
+  // Delete the Square from the Database
+  try (Connection connection = dataSource.getConnection()) {
+    int identifier = Integer.parseInt(id);
+    Statement stmt = connection.createStatement();
+    String sql = "DELETE FROM squares WHERE ID="+identifier;
+    System.out.println(sql);
+    stmt.executeUpdate(sql);
+    return "redirect:/";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  }
+
+}
+
 
   @Bean
   public DataSource dataSource() throws SQLException {
