@@ -63,11 +63,20 @@ public class Main {
       ResultSet rs = stmt.executeQuery("SELECT * FROM squares");
       ArrayList<String> output = new ArrayList<String>();
       ArrayList<Integer> idlist = new ArrayList<Integer>();
+      ArrayList<String> colorlist = new ArrayList<String>();
+      ColorUtils colortester = new ColorUtils();
+
       while (rs.next()) {
         output.add(rs.getString("boxname"));
         idlist.add(rs.getInt("id"));
+        colorlist.add(rs.getString("boxcolor"));
       }
 
+      for (int x = 0;x < colorlist.size();x++) {
+        colorlist.set(x,colortester.getColorNameFromHex((int) Long.parseLong(colorlist.get(x).substring(1), 16))) ;
+      }
+      
+      model.put("colors",colorlist);
       model.put("boxes", output);
       model.put("idlist", idlist);
       return "index";

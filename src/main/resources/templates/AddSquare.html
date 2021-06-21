@@ -10,8 +10,8 @@
     <header>Square Submission Form</header>
     <form action="#" method="post" th:action="@{/AddSquare}" th:object="${square}">
         Name : <input type="text" th:field=*{boxname} placeholder="name of box"> <br>
-        Height : <input type="number" th:field=*{height}> <br>
-        Width : <input type="number" th:field=*{width}> <br>
+        Height : <input type="number" th:field=*{height}> pixels <br>
+        Width : <input type="number" th:field=*{width}> pixels <br>
         Color : <input type="color" th:field=*{boxcolor} placeholder="#000000"> <br>
         Outlined : <input type="checkbox" th:field=*{outlined}> <br>
         <input type="submit" value="Submit Square to Database">
