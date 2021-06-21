@@ -14,8 +14,8 @@
         <th>Database Output</th>
         <tr th:each="boxname,iteration : ${boxes}">
           <td th:text="${boxname}"></td>
-          <td><a th:href="@{/openbox(id=${idlist[iteration.index]})}">View/Delete</a></td>
           <td th:text="${colors[iteration.index]}"></td>
+          <td><a th:href="@{/openbox(id=${idlist[iteration.index]})}">View/Delete</a></td>
         </tr>
     </table>
     <button onclick="window.location.href='/AddSquare'">Submit a new Square to be recorded</button>
